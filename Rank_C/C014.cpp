@@ -9,6 +9,7 @@ int main(void)
     int h, w, d;
 
     cin >> n >> r;
+    r = r*2;
 
     for(int i=0; i<n; ++i)
     {
