@@ -1,0 +1,4 @@
+.vscode/
+*.exe
+in.txt
+build.bat
