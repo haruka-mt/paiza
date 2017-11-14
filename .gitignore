@@ -1,4 +1,5 @@
 .vscode/
 *.exe
+*.out
 in.txt
 build.bat
