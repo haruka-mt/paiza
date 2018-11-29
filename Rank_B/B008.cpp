@@ -7,7 +7,6 @@ using namespace std;
 int main(void)
 {
     int n, m;
-
     cin >> n >> m;
 
     int i, j;
