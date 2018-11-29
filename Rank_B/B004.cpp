@@ -1,115 +1,70 @@
 #include <iostream>
-#include <cstdio>
+#include <string>
 #include <sstream>
 
 using namespace std;
 
+bool CheckDegit(int tgt, int from, int to)
+{
+    if (tgt >= from && tgt <= to)
+        return true;
+    else
+        return false;
+}
+
 int main(void)
 {
-    string buf, address[4];
-    int num;
-
-    int i = 0;
-    getline(cin, buf);
-    stringstream ssTmp{buf};
-    while (getline(ssTmp, buf, '.'))
+    string targetIPstr;
+    cin >> targetIPstr;
+    pair<int, int> ipRange[4];
+    stringstream ss{targetIPstr};
+    for (int i = 0; i < 4; ++i)
     {
-        address[i] = buf;
-        int tmp;
-        if(i < 2)
+        string buffer;
+        getline(ss, buffer, '.');
+        if (buffer == "*")
         {
-            tmp = stoi(address[i]);
-        }     
-        if (i < 3 && (tmp < 0 || tmp > 255))
-        {
-            return 0;
+            ipRange[i] = make_pair(0, 255);
         }
-        i++;
-        if (i > 4)
+        else if (buffer.substr(0, 1) != "[")
         {
-            break;
+            ipRange[i] = make_pair(stoi(buffer), stoi(buffer));
+        }
+        else
+        {
+            int index = buffer.find("-");
+            string min = buffer.substr(1, index - 1);
+            string max = buffer.substr(index + 1, buffer.size() - 1);
+            ipRange[i] = make_pair(stoi(min), stoi(max));
         }
     }
 
-    scanf("%d", &num);
-    cin.ignore();
-    cin.ignore();
-
-    for (i = 0; i < num; ++i)
+    int num;
+    cin >> num;
+    for (int i = 0; i < num; ++i)
     {
-        getline(cin, buf);
-        stringstream ss{buf};
-        int line = 0;
-        bool flag = false;
-        int octet = 0;
-        while (getline(ss, buf, ' '))
+        string info[8];
+        for (int j = 0; j < 8; ++j)
         {
-            if (line == 0)
-            {
-                stringstream ss2{buf};
-                string ipNum;
-                while (getline(ss2, ipNum, '.'))
-                {
-                    if (address[octet][0] != '[' && address[octet][0] != '*')
-                    {
-                        if (ipNum == address[octet])
-                        {
-                            flag = true;
-                        }
-                        else
-                        {
-                            flag = false;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        int min, max;
-                        if (address[octet][0] == '[')
-                        {
-                            string tmp = address[octet].substr(1);
-                            tmp.erase(tmp.length() - 1);
+            cin >> info[j];
+        }
+        cin.ignore();
+        string junk;
+        getline(std::cin, junk);
 
-                            int index = tmp.find('-');
-                            min = stoi(tmp.substr(0, index));
-                            max = stoi(tmp.substr(index + 1, tmp.length() - (int)index));
-                        }
-                        else
-                        {
-                            min = 0;
-                            max = 255;
-                        }
-                        if (stoi(ipNum) >= min && stoi(ipNum) <= max)
-                        {
-                            flag = true;
-                        }
-                        else
-                        {
-                            flag = false;
-                            break;
-                        }
-                    }
-                    octet++;
-                }
-                if (flag == true)
-                {
-                    cout << buf;
-                }
-            }
-            if (line == 3 && flag == true)
-            {
-                cout << " " << buf.substr(1);
-            }
-            if (line == 6 && flag == true)
-            {
-                cout << " " << buf;
-            }
-            line++;
-        }
-        if (flag == true)
+        bool hasTargetIP = true;
+        stringstream ss{info[0]};
+        for (int j = 0; j < 4; ++j)
         {
-            cout << endl;
+            string buffer;
+            getline(ss, buffer, '.');
+            hasTargetIP = CheckDegit(stoi(buffer), ipRange[j].first, ipRange[j].second);
+            if (!hasTargetIP)
+                break;
         }
+
+        if (hasTargetIP)
+            cout << info[0] << " " << info[3].substr(1) << " " << info[6] << endl;
     }
 
     return 0;
